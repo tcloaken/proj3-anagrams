@@ -80,34 +80,79 @@
 <br />
 <div class="row">
   <div class="col-xs-6 text-center">
-  <form id="entry" method="POST" action="/_check">
+  <!--<form id="entry" method="POST" action="/_check">-->
     <label for="attempt">Word:</label>
     <input id="attempt" name="attempt" type="text" width="15"
       autocomplete="off"  autofocus />
-    <input type="submit" name="try" />
+    
   </form>
 </div></div>
+<p id="response"> </p>
+<h2 id="you_found"> </h2>
+<p id="results"> </p>
 
+
+
+<script>
+
+
+
+// On each keystroke, ask the server whether the current 
+// word is a word on the page. 
+//
+// We use 'keyup' because the form value
+// is updated before that event is generated.
+// keypress is triggered before the input field has been
+// updated.  Be aware that we'll see non-character keys like
+// shift and control, so make sure whatever you do with the
+// event does not depend on it being a letter. 
+//
+$("#attempt").keyup(function(event) {
+   var txt = $("#attempt").val();  // Current content of the input field
+   var keycode = event.which;      // They key that just went up
+   var letter = String.fromCharCode(keycode);
+   //var URL_success = "{{url_for("success")}}";
+   // That letter might not be a letter ... it could be the
+   // the backspace key, or even the shift key, because 'keyup'
+   // catches all kinds of keys.  (Also, the difference between
+   // upper and lower case comes from state of shift key + key code,
+   // so ignoring the shift key we get only the upper case letters.
+   $("#response").html(""); //clear response field
+   if (! "ABCDEFGHIJKLMNOPQRSTUVWXYZ".includes(letter)) { return }
+  
+   $.getJSON( "/_checkem", { text: txt }, 
+              function(data) {
+                matched = data.result.matched;  //bool true: if txt is in the list of words and is in jumble
+                not_jumble = data.result.not_jumble; //bool true: if the txt contains invalid letters that aren't in the jumble
+			    duplicate = data.result.duplicate; //bool true: if a word is duplicated
+				success = data.result.success; //bool true: if enough words are found
+                if (matched) {
+					
+				   if(success){
+					  console.log("success_activated");
+					  window.location = data.result.url; //redirects to success page
+					  //$("#response").html('<a href="'+data.result.url+'"><strong>SUCCESS!!!</strong></a>')//creates a link to the success page
+					  }  
+				  
+                   $("#you_found").html(" You found: " );
+				   $("#results").append(txt + " ");
+                   $("#attempt").val("");  //clear attempt field
+                } else if (not_jumble) {
+                   $("#response").html("error: you used invalid letters!");
+				} else if (duplicate) {
+				   $("#response").html("You already have that word!");
+				   $("#attempt").val("");
+				}
+				
+                
+               }
+           );
+   });
+
+</script>
 <br />
 
-{% if session.matches|length is not equalto 0  %}
-<h2>You found </h2>
-<p id="results">
-  {% for match in session.matches %}
-  {{ match }} 
-  {% endfor %}
-</p>
-{% endif %}
 
-
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <!-- Mismatch, already found, etc. "flashed" from Python -->
-    {% for message in messages %}
-      <p class="message">{{ message }}</p>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
 
 
 

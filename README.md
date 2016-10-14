@@ -1,6 +1,11 @@
 # proj3-anagrams
 Vocabularly anagrams game for primary school English language learners (ELL)
 
+# To run from source: 
+#    bash ./configure
+#    make run 
+# 
+
 
 ## Overview
 
@@ -14,23 +19,13 @@ The vocabulary word list is fixed for one invocation of the server, so multiple
 students connected to the same server will see the same vocabulary list but may 
 have different anagrams.
 
+This program uses javascript to query the server for word information of each key entry so the user has instant feedback.
+
 ## Authors 
 
-Initial version by M Young; to be revised by CIS 322 students. 
+Initial version by M Young; to be revised by Trevor Enright,  tenright@uoregon.edu
 
-## Status
 
-flask_vocab.py and the template vocab.html are a 'skeleton' version 
-of the anagram game for a CIS 322 project.  They uses conventional  
-interaction through a form, interacting only when the user submits the form. 
-Your assignment is to replace the interaction with AJAX interaction on each 
-keystroke. 
-
-## Minijax? 
-
-flask_minijax.py and templates/minijax.html are a tiny example of using JQuery 
-with flask for an Ajax application.  They should not be included in the
-version of the project you turn in. 
 
 
 ## To run automated tests 
